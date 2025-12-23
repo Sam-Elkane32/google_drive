@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveLite</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <div class="brand">
+                <span class="brand-mark"></span>
+                <div class="brand-text">
+                    <h1>DriveLite</h1>
+                    <p>Google Drive File Manager</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="logout-btn" class="btn-secondary hidden">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="auth-section" class="auth-section">
+            <div class="auth-card">
+                <h2>Sign in to DriveLite</h2>
+                <p>Securely browse your Google Drive files, preview details, and open them in Google Drive.</p>
+                <button id="signin-btn" class="btn-primary">Sign in with Google</button>
+                <p class="auth-hint">Your files remain private. DriveLite uses read-only access to view and open files in Google Drive, without modifying or deleting anything.</p>
+            </div>
+        </section>
+
+        <section id="app-section" class="app-section hidden">
+            <div class="toolbar">
+                <div class="filters" aria-label="File type filter">
+                    <button class="filter-btn filter-active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="folders">Folders</button>
+                    <button class="filter-btn" data-filter="pdfs">PDFs</button>
+                    <button class="filter-btn" data-filter="images">Images</button>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <span class="search-icon" aria-hidden="true"></span>
+                    <input type="text" id="search-input" placeholder="Search files by name..." autocomplete="off">
+                </div>
+                <button id="search-btn" class="btn-primary">Search</button>
+            </div>
+
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Loading your Google Drive files...</p>
+            </div>
+
+            <div id="error-message" class="error-message hidden"></div>
+
+            <div id="drive-info" class="drive-info"></div>
+
+            <div id="results-container" class="results-container"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Powered by Google Drive API</p>
+    </footer>
+
+    <div id="file-modal" class="modal hidden">
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <button id="modal-close" class="modal-close" aria-label="Close file details">&times;</button>
+                <h2 id="modal-file-name"></h2>
+                <div class="modal-body">
+                    <p class="modal-meta"><strong>Type:</strong> <span id="modal-file-type"></span></p>
+                    <p class="modal-meta"><strong>Size:</strong> <span id="modal-file-size"></span></p>
+                    <p class="modal-meta"><strong>Modified:</strong> <span id="modal-file-modified"></span></p>
+                </div>
+                <div class="modal-actions">
+                    <button id="modal-open-drive" class="btn-primary">Open in Google Drive</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
