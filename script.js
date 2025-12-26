@@ -522,3 +522,120 @@ function resetToLoginState() {
     if (appSection) appSection.classList.add("hidden");
     if (logoutBtn) logoutBtn.classList.add("hidden");
 }
+// ============================================
+// MODAL LOGIC
+// ============================================
+function openFileModal(file) {
+    const modal = document.getElementById("file-modal");
+    if (!modal) return;
+
+    const nameEl = document.getElementById("modal-file-name");
+    const typeEl = document.getElementById("modal-file-type");
+    const sizeEl = document.getElementById("modal-file-size");
+    const modifiedEl = document.getElementById("modal-file-modified");
+
+    if (nameEl) nameEl.textContent = file.name || "Untitled";
+    if (typeEl) typeEl.textContent = file.mimeType || "Unknown";
+    if (sizeEl) {
+        const size =
+            file.size && !isNaN(parseInt(file.size, 10))
+                ? formatBytes(parseInt(file.size, 10))
+                : "Unknown";
+        sizeEl.textContent = size;
+    }
+    if (modifiedEl) {
+        modifiedEl.textContent = file.modifiedTime
+            ? new Date(file.modifiedTime).toLocaleString()
+            : "Unknown";
+    }
+    currentFileWebViewLink = file.webViewLink || null;
+
+    modal.classList.remove("hidden");
+}
+
+function closeFileModal() {
+    const modal = document.getElementById("file-modal");
+    if (!modal) return;
+    modal.classList.add("hidden");
+}
+
+// ============================================
+// INITIALIZE EVENT LISTENERS
+// ============================================
+document.addEventListener("DOMContentLoaded", () => {
+    const signinBtn = document.getElementById("signin-btn");
+    const searchBtn = document.getElementById("search-btn");
+    const searchInput = document.getElementById("search-input");
+    const logoutBtn = document.getElementById("logout-btn");
+    const modal = document.getElementById("file-modal");
+    const modalClose = document.getElementById("modal-close");
+    const modalOpenDrive = document.getElementById("modal-open-drive");
+    const filterButtons = document.querySelectorAll(".filter-btn");
+
+    if (signinBtn) {
+        signinBtn.addEventListener("click", handleGoogleLogin);
+    }
+
+    if (searchBtn) {
+        searchBtn.addEventListener("click", handleSearch);
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                handleSearch();
+            }
+        });
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", handleLogout);
+    }
+
+    filterButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const filter = btn.dataset.filter || "all";
+            handleFilterClick(filter);
+        });
+    });
+
+    if (modal && modalClose) {
+        modalClose.addEventListener("click", () => {
+            closeFileModal();
+        });
+
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal || e.target.classList.contains("modal-overlay")) {
+                closeFileModal();
+            }
+        });
+    }
+
+    if (modalOpenDrive) {
+        modalOpenDrive.addEventListener("click", () => {
+            if (currentFileWebViewLink) {
+                window.open(currentFileWebViewLink, "_blank", "noopener");
+            } else {
+                showError("Unable to open file in Google Drive.");
+            }
+        });
+    }
+
+    // Wait for Google Identity Services to load
+    let attempts = 0;
+    const maxAttempts = 50; // ~5 seconds
+
+    function waitForGoogle() {
+        if (typeof google !== "undefined" && google.accounts && google.accounts.oauth2) {
+            return;
+        }
+        attempts += 1;
+        if (attempts < maxAttempts) {
+            setTimeout(waitForGoogle, 100);
+        } else {
+            console.warn("Google Identity Services library did not load within expected time.");
+        }
+    }
+
+    waitForGoogle();
+});
