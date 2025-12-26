@@ -549,7 +549,6 @@ function openFileModal(file) {
             ? new Date(file.modifiedTime).toLocaleString()
             : "Unknown";
     }
-
     currentFileWebViewLink = file.webViewLink || null;
 
     modal.classList.remove("hidden");
